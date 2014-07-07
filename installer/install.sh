@@ -1,6 +1,6 @@
 # Rackspace backup agent
-sudo sh -c 'wget -q "http://agentrepo.drivesrvr.com/debian/agentrepo.key" -O- | apt-key add -'
-sudo sh -c 'echo "deb [arch=amd64] http://agentrepo.drivesrvr.com/debian/ serveragent main" > /etc/apt/sources.list.d/driveclient.list'
+sh -c 'wget -q "http://agentrepo.drivesrvr.com/debian/agentrepo.key" -O- | apt-key add -'
+sh -c 'echo "deb [arch=amd64] http://agentrepo.drivesrvr.com/debian/ serveragent main" > /etc/apt/sources.list.d/driveclient.list'
 
 # based on http://plusbryan.com/my-first-5-minutes-on-a-server-or-essential-security-for-linux-servers
 passwd -d root
@@ -21,8 +21,17 @@ ufw enable
 mv 10periodic /etc/apt/apt.conf.d/
 mv 50unattended-upgrades /etc/apt/apt.conf.d/
 mv 00logwatch /etc/cron.daily/
+echo Now choose a sudo password for the 'deploy' user
 passwd deploy
+
+# Set up backup agent
+echo Now enter your Rackspace username and API key (see RackSpace UI top right, 'Account Settings' menu)
+/usr/local/bin/driveclient --configure
+service driveclient start
+update-rc.d driveclient defaults
 
 # Docker
 docker pull michielbdejong/resite
 docker run -d -v /data-michiel:/data -p 80:80 -p 443:443 -p 7678:7678 thirdpartypeople/resite
+
+echo Now restore a data backup to the new Jessie server, check that it's up, and repoint DNS. Thanks!
