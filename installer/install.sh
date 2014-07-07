@@ -16,6 +16,7 @@ chown deploy:deploy /home/deploy -R
 ufw allow 22
 ufw allow 80
 ufw allow 443
+ufw allow 7678
 ufw enable
 mv 10periodic /etc/apt/apt.conf.d/
 mv 50unattended-upgrades /etc/apt/apt.conf.d/
@@ -23,5 +24,5 @@ mv 00logwatch /etc/cron.daily/
 passwd deploy
 
 # Docker
-docker pull thirdpartypeople/resite
-docker run -d -v /data-michiel:/data -p 80:80 -p 443:443 thirdpartypeople/resite
+docker pull michielbdejong/resite
+docker run -d -v /data-michiel:/data -p 80:80 -p 443:443 -p 7678:7678 thirdpartypeople/resite
