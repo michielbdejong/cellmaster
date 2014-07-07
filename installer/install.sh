@@ -3,10 +3,11 @@ sh -c 'wget -q "http://agentrepo.drivesrvr.com/debian/agentrepo.key" -O- | apt-k
 sh -c 'echo "deb [arch=amd64] http://agentrepo.drivesrvr.com/debian/ serveragent main" > /etc/apt/sources.list.d/driveclient.list'
 
 # based on http://plusbryan.com/my-first-5-minutes-on-a-server-or-essential-security-for-linux-servers
+echo You will have to answer 'y' three times during this process:
 passwd -d root
 apt-get -y update
 apt-get -y upgrade
-apt-get -y install vim ufw fail2ban unattended-upgrades logwatch driveclient docker
+apt-get -y install vim ufw fail2ban unattended-upgrades logwatch driveclient docker.io
 useradd -G sudo deploy
 mkdir -p /home/deploy/.ssh
 chmod 700 /home/deploy/.ssh
@@ -31,7 +32,9 @@ service driveclient start
 update-rc.d driveclient defaults
 
 # Docker
+ln -sf /usr/bin/docker.io /usr/local/bin/docker
+sed -i '$acomplete -F _docker docker' /etc/bash_completion.d/docker.io
 docker pull michielbdejong/resite
-docker run -d -v /data-michiel:/data -p 80:80 -p 443:443 -p 7678:7678 thirdpartypeople/resite
+docker run -d -v /data-michiel:/data -p 80:80 -p 443:443 -p 7678:7678 michielbdejong/resite
 
 echo Now restore a data backup to the new Jessie server, check that it's up, and repoint DNS. Thanks!
